@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from app.models.domain import UserRole, AcquisitionStage, CompensationStatus, VerdictType, AlertSeverity
@@ -22,7 +22,14 @@ class UserResponse(BaseModel):
     full_name: str
     role: UserRole
     is_active: bool
-    created_at: datetime
+    created_at: Optional[datetime] = None
+
+    @field_validator("id", mode="before")
+    @classmethod
+    def serialize_id(cls, v: Any) -> str:
+        if v is not None:
+            return str(v)
+        return ""
 
     class Config:
         from_attributes = True
@@ -42,6 +49,13 @@ class ProjectResponse(BaseModel):
     district: str
     created_at: datetime
 
+    @field_validator("id", mode="before")
+    @classmethod
+    def serialize_id(cls, v: Any) -> str:
+        if v is not None:
+            return str(v)
+        return ""
+
     class Config:
         from_attributes = True
 
@@ -52,6 +66,13 @@ class CorridorResponse(BaseModel):
     name: str
     geometry: Dict[str, Any]
     created_at: datetime
+
+    @field_validator("id", "project_id", mode="before")
+    @classmethod
+    def serialize_ids(cls, v: Any) -> str:
+        if v is not None:
+            return str(v)
+        return ""
 
     class Config:
         from_attributes = True
@@ -73,6 +94,13 @@ class ParcelResponse(BaseModel):
     verdict: VerdictType
     created_at: datetime
     updated_at: datetime
+
+    @field_validator("id", "project_id", "corridor_id", mode="before")
+    @classmethod
+    def serialize_ids(cls, v: Any) -> Optional[str]:
+        if v is not None:
+            return str(v)
+        return None
 
     class Config:
         from_attributes = True
@@ -112,6 +140,13 @@ class AttestationResponse(BaseModel):
     final_verdict: VerdictType
     created_at: datetime
 
+    @field_validator("id", "capture_id", "parcel_id", mode="before")
+    @classmethod
+    def serialize_ids(cls, v: Any) -> str:
+        if v is not None:
+            return str(v)
+        return ""
+
     class Config:
         from_attributes = True
 
@@ -135,6 +170,13 @@ class AlertResponse(BaseModel):
     is_resolved: bool
     created_at: datetime
 
+    @field_validator("id", "parcel_id", mode="before")
+    @classmethod
+    def serialize_ids(cls, v: Any) -> str:
+        if v is not None:
+            return str(v)
+        return ""
+
     class Config:
         from_attributes = True
 
@@ -149,6 +191,13 @@ class AuditLogResponse(BaseModel):
     evidence_hash: Optional[str] = None
     confidence_score: Optional[float] = None
     timestamp: datetime
+
+    @field_validator("id", "user_id", "parcel_id", mode="before")
+    @classmethod
+    def serialize_ids(cls, v: Any) -> Optional[str]:
+        if v is not None:
+            return str(v)
+        return None
 
     class Config:
         from_attributes = True

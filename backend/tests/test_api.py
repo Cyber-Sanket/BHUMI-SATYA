@@ -23,6 +23,76 @@ def test_login():
     token = res.json()["access_token"]
     assert token is not None
 
+def test_get_me_authenticated():
+    # 1. Test with Admin account
+    login_res = client.post(
+        "/api/v1/auth/login",
+        data={"username": "admin@bhumisatya.gov.in", "password": "AdminPass123!"}
+    )
+    assert login_res.status_code == 200
+    token = login_res.json()["access_token"]
+    assert token is not None
+
+    res = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert res.status_code == 200
+    data = res.json()
+    assert isinstance(data["id"], str)
+    assert len(data["id"]) > 0
+    assert data["email"] == "admin@bhumisatya.gov.in"
+    assert data["role"] == "ADMIN"
+    assert data["is_active"] is True
+    assert "created_at" in data
+
+    # 2. Test with Field Officer account
+    login_field = client.post(
+        "/api/v1/auth/login",
+        data={"username": "field1@bhumisatya.gov.in", "password": "FieldPass123!"}
+    )
+    assert login_field.status_code == 200
+    field_token = login_field.json()["access_token"]
+
+    res_field = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {field_token}"})
+    assert res_field.status_code == 200
+    data_field = res_field.json()
+    assert isinstance(data_field["id"], str)
+    assert len(data_field["id"]) > 0
+    assert data_field["email"] == "field1@bhumisatya.gov.in"
+    assert data_field["role"] == "FIELD_OFFICER"
+    assert data_field["is_active"] is True
+
+def test_get_me_with_uuid_instance():
+    import uuid
+    from datetime import datetime, timezone
+    from app.models.domain import User, UserRole
+    from app.auth.rbac import get_current_user
+
+    test_uuid = uuid.uuid4()
+    mock_user = User(
+        email="uuid_test@bhumisatya.gov.in",
+        hashed_password="hashed_pwd",
+        full_name="UUID Test Officer",
+        role=UserRole.ADMIN,
+        is_active=True
+    )
+    mock_user.id = test_uuid
+    mock_user.created_at = datetime.now(timezone.utc)
+
+    app.dependency_overrides[get_current_user] = lambda: mock_user
+    try:
+        res = client.get("/api/v1/auth/me")
+        assert res.status_code == 200
+        data = res.json()
+        assert isinstance(data["id"], str)
+        assert data["id"] == str(test_uuid)
+        assert data["email"] == "uuid_test@bhumisatya.gov.in"
+        assert data["role"] == "ADMIN"
+    finally:
+        app.dependency_overrides.pop(get_current_user, None)
+
+def test_get_me_invalid_token():
+    res = client.get("/api/v1/auth/me", headers={"Authorization": "Bearer invalid.token.value"})
+    assert res.status_code == 401
+
 def test_get_parcels():
     res = client.get("/api/v1/parcels")
     assert res.status_code == 200
