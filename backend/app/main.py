@@ -44,23 +44,14 @@ def startup_event():
     try:
         db = SessionLocal()
         seed_initial_data_if_needed(db)
-    except Exception as e:
-        print(f"[!] Startup seed warning: {e}")
+    except Exception:
+        print("[!] Startup check: initial record verification skipped.")
     finally:
         db.close()
 
 @app.get("/health", tags=["Health"])
 def health_check():
     return {"status": "ok", "app": settings.PROJECT_NAME, "version": settings.VERSION}
-
-@app.get("/debug-db", tags=["Health"])
-def debug_db(db: Session = Depends(get_db)):
-    from app.models.domain import Parcel
-    return {
-        "db_url": settings.DATABASE_URL,
-        "count": db.query(Parcel).count(),
-        "parcels": [p.parcel_code for p in db.query(Parcel).all()]
-    }
 
 @app.get("/", tags=["Health"])
 def root():
