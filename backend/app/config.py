@@ -22,6 +22,8 @@ class Settings(BaseSettings):
         f"sqlite:///{DEFAULT_DB_PATH.as_posix()}"
     )
     
+    ALLOWED_ORIGINS: str = os.getenv("ALLOWED_ORIGINS", "*")
+    
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 settings = Settings()
