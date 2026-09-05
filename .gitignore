@@ -1,0 +1,35 @@
+# Environment & Secrets
+.env
+*.env
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+backend/venv/
+.pytest_cache/
+.coverage
+bhumi_satya.db
+
+# Node.js
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Flutter / Android / iOS
+mobile/.dart_tool/
+mobile/.idea/
+mobile/.packages
+mobile/build/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+*.key
+frontend/vite.config.js.timestamp-*.mjs

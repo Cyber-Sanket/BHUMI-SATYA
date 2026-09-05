@@ -1,0 +1,11 @@
+# Netlify configuration for BHUMI-SATYA Web Frontend
+[build]
+  base = "frontend"
+  publish = "dist"
+  command = "npm run build"
+
+# Single Page Application SPA Routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

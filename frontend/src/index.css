@@ -1,0 +1,264 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* LIGHT THEME VARIABLES */
+  --bg-app: #F5F7FA;
+  --bg-surface: #FFFFFF;
+  --bg-secondary: #EEF2F6;
+  --border-color: #D5DCE5;
+  --text-primary: #172033;
+  --text-secondary: #526174;
+
+  --accent-green: #15803d;
+  --accent-amber: #b45309;
+  --accent-orange: #c2410c;
+  --accent-red: #b91c1c;
+
+  --badge-verified-bg: #e6f4ea;
+  --badge-verified-text: #137333;
+  --badge-verified-border: #a8dab5;
+
+  --badge-review-bg: #fef3c7;
+  --badge-review-text: #b45309;
+  --badge-review-border: #fde68a;
+
+  --badge-blocked-bg: #fee2e2;
+  --badge-blocked-text: #b91c1c;
+  --badge-blocked-border: #fca5a5;
+
+  --badge-stalled-bg: #eef2f6;
+  --badge-stalled-text: #526174;
+  --badge-stalled-border: #d5dce5;
+
+  --scrollbar-track: #eef2f6;
+  --scrollbar-thumb: #d5dce5;
+
+  --font-sans: 'IBM Plex Sans', 'Inter', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* DARK THEME VARIABLES */
+    --bg-app: #0F141B;
+    --bg-surface: #151C25;
+    --bg-secondary: #1B2430;
+    --border-color: #2B3644;
+    --text-primary: #E7ECF2;
+    --text-secondary: #9AA8B8;
+
+    --accent-green: #22c55e;
+    --accent-amber: #f59e0b;
+    --accent-orange: #f97316;
+    --accent-red: #ef4444;
+
+    --badge-verified-bg: #052e16;
+    --badge-verified-text: #4ade80;
+    --badge-verified-border: #14532d;
+
+    --badge-review-bg: #451a03;
+    --badge-review-text: #fbbf24;
+    --badge-review-border: #78350f;
+
+    --badge-blocked-bg: #450a0a;
+    --badge-blocked-text: #f87171;
+    --badge-blocked-border: #7f1d1d;
+
+    --badge-stalled-bg: #1b2430;
+    --badge-stalled-text: #9aa8b8;
+    --badge-stalled-border: #2b3644;
+
+    --scrollbar-track: #151c25;
+    --scrollbar-thumb: #2b3644;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+/* Centralized Utility Classes for CSS variables */
+.theme-bg-app { background-color: var(--bg-app) !important; }
+.theme-bg-surface { background-color: var(--bg-surface) !important; }
+.theme-bg-secondary { background-color: var(--bg-secondary) !important; }
+.theme-border { border-color: var(--border-color) !important; }
+.theme-text-primary { color: var(--text-primary) !important; }
+.theme-text-secondary { color: var(--text-secondary) !important; }
+
+/* Institutional Flat Panel */
+.inst-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.inst-panel-header {
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Form Inputs System Theme */
+input, select, textarea {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-secondary) !important;
+}
+
+/* Restrained Status Badges */
+.badge-verified {
+  background: var(--badge-verified-bg);
+  color: var(--badge-verified-text);
+  border: 1px solid var(--badge-verified-border);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  border-radius: 2px;
+  padding: 1px 6px;
+  font-size: 11px;
+}
+
+.badge-review {
+  background: var(--badge-review-bg);
+  color: var(--badge-review-text);
+  border: 1px solid var(--badge-review-border);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  border-radius: 2px;
+  padding: 1px 6px;
+  font-size: 11px;
+}
+
+.badge-warning {
+  background: var(--badge-review-bg);
+  color: var(--accent-orange);
+  border: 1px solid var(--badge-review-border);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  border-radius: 2px;
+  padding: 1px 6px;
+  font-size: 11px;
+}
+
+.badge-blocked {
+  background: var(--badge-blocked-bg);
+  color: var(--badge-blocked-text);
+  border: 1px solid var(--badge-blocked-border);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  border-radius: 2px;
+  padding: 1px 6px;
+  font-size: 11px;
+}
+
+.badge-stalled {
+  background: var(--badge-stalled-bg);
+  color: var(--badge-stalled-text);
+  border: 1px solid var(--badge-stalled-border);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  border-radius: 2px;
+  padding: 1px 6px;
+  font-size: 11px;
+}
+
+/* Cadastral Table Styling */
+.cadastral-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+
+.cadastral-table th {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+}
+
+.cadastral-table th:last-child {
+  border-right: none;
+}
+
+.cadastral-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.cadastral-table td:last-child {
+  border-right: none;
+}
+
+.cadastral-table tr:hover td {
+  background: var(--bg-secondary);
+}
+
+/* MapLibre Popup Styling for Cadastral Map */
+.maplibregl-popup-content {
+  background: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  font-family: var(--font-sans) !important;
+}
+
+.maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: var(--bg-surface) !important; }
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: var(--bg-surface) !important; }
+.maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: var(--bg-surface) !important; }
+.maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: var(--bg-surface) !important; }
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-color);
+}
