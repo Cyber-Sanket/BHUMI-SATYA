@@ -33,10 +33,21 @@ app.include_router(evidence.router, prefix=settings.API_V1_STR)
 app.include_router(alerts.router, prefix=settings.API_V1_STR)
 app.include_router(landowner.router, prefix=settings.API_V1_STR)
 
+from app.services.seed_service import seed_initial_data_if_needed
+from app.database import SessionLocal
+
 @app.on_event("startup")
 def startup_event():
     # Automatically create tables if not exist
     Base.metadata.create_all(bind=engine)
+    # Ensure demo users and initial dataset exist idempotently
+    try:
+        db = SessionLocal()
+        seed_initial_data_if_needed(db)
+    except Exception as e:
+        print(f"[!] Startup seed warning: {e}")
+    finally:
+        db.close()
 
 @app.get("/health", tags=["Health"])
 def health_check():

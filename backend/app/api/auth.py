@@ -26,3 +26,11 @@ def get_me(current_user: User = Depends(get_current_user)):
     if not current_user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     return current_user
+
+from app.services.seed_service import seed_initial_data_if_needed
+
+@router.post("/seed-demo-users")
+def seed_demo_users(db: Session = Depends(get_db)):
+    result = seed_initial_data_if_needed(db)
+    return {"status": "ok", "message": "Demo users and initial data verified/seeded", "detail": result}
+
