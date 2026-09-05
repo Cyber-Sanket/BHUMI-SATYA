@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, Outlet } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import FieldSimulatorModal from './components/FieldSimulatorModal';
 
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import MapView from './pages/MapView';
 import ParcelDetail from './pages/ParcelDetail';
@@ -12,7 +15,7 @@ import LandownerPortal from './pages/LandownerPortal';
 import AuditTimeline from './components/AuditTimeline';
 import apiService from './services/api';
 
-function AppContent() {
+function AppLayout() {
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const [parcels, setParcels] = useState([]);
   const [alertsCount, setAlertsCount] = useState(0);
@@ -85,13 +88,13 @@ function AppContent() {
             <Route
               path="/evidence-log"
               element={
-                <div className="p-5 max-w-7xl mx-auto space-y-4">
-                  <div className="border-b border-slate-200 pb-3 flex justify-between items-center">
+                <div className="p-5 max-w-7xl mx-auto space-y-4 font-mono">
+                  <div className="border-b theme-border pb-3 flex justify-between items-center">
                     <div>
-                      <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block">04 EVIDENCE REGISTER</span>
-                      <h1 className="text-base font-bold text-slate-900 tracking-tight">FIELD EVIDENCE INGESTION REGISTER</h1>
+                      <span className="text-[10px] theme-text-secondary uppercase tracking-widest block font-bold">04 EVIDENCE REGISTER</span>
+                      <h1 className="text-base font-bold theme-text-primary tracking-tight">FIELD EVIDENCE INGESTION REGISTER</h1>
                     </div>
-                    <span className="font-mono text-xs text-slate-600 bg-slate-100 border border-slate-300 px-2 py-0.5 rounded-sm">
+                    <span className="text-xs theme-text-primary theme-bg-secondary border theme-border px-2 py-0.5 rounded-sm">
                       TOTAL RECORDED: {auditLogs.length}
                     </span>
                   </div>
@@ -115,13 +118,13 @@ function AppContent() {
             <Route
               path="/audit-trail"
               element={
-                <div className="p-5 max-w-7xl mx-auto space-y-4">
-                  <div className="border-b border-slate-200 pb-3 flex justify-between items-center">
+                <div className="p-5 max-w-7xl mx-auto space-y-4 font-mono">
+                  <div className="border-b theme-border pb-3 flex justify-between items-center">
                     <div>
-                      <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block">06 AUDIT REGISTER</span>
-                      <h1 className="text-base font-bold text-slate-900 tracking-tight">SYSTEM AUDIT & VERIFICATION TRAIL</h1>
+                      <span className="text-[10px] theme-text-secondary uppercase tracking-widest block font-bold">06 AUDIT REGISTER</span>
+                      <h1 className="text-base font-bold theme-text-primary tracking-tight">SYSTEM AUDIT & VERIFICATION TRAIL</h1>
                     </div>
-                    <div className="flex items-center gap-3 font-mono text-xs text-slate-600">
+                    <div className="flex items-center gap-3 text-xs theme-text-secondary">
                       <span>AUDIT LOG: ACTIVE</span>
                       <span>CRS: EPSG:4326</span>
                     </div>
@@ -130,7 +133,6 @@ function AppContent() {
                 </div>
               }
             />
-            <Route path="/landowner" element={<LandownerPortal />} />
           </Routes>
         </main>
       </div>
@@ -149,7 +151,23 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <AuthProvider>
+        <Routes>
+          {/* Public / Unauthenticated Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/landowner" element={<LandownerPortal />} />
+
+          {/* Protected Application Routes */}
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

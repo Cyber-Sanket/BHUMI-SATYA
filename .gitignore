@@ -33,3 +33,6 @@ Thumbs.db
 
 *.key
 frontend/vite.config.js.timestamp-*.mjs
+
+# Local Netlify folder
+.netlify

@@ -19,6 +19,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Response interceptor to handle 401 Unauthorized
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      window.dispatchEvent(new Event('auth-unauthorized'));
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const apiService = {
   // Health
   checkHealth: () => {

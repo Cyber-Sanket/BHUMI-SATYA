@@ -1,7 +1,9 @@
 import React from 'react';
-import { Smartphone, Bell, User } from 'lucide-react';
+import { Smartphone, Bell, User, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar({ onOpenSimulator, activeAlertsCount = 0 }) {
+  const { user, logout } = useAuth();
   const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false }) + ' IST';
 
   return (
@@ -69,9 +71,19 @@ export default function Navbar({ onOpenSimulator, activeAlertsCount = 0 }) {
         {/* User Badge */}
         <div className="flex items-center gap-1.5 theme-text-secondary font-mono text-[11px]">
           <User className="h-3.5 w-3.5 theme-text-secondary" />
-          <span className="font-bold theme-text-primary">Suresh Kumar</span>
-          <span className="text-[9px] theme-text-secondary uppercase">(Field Officer)</span>
+          <span className="font-bold theme-text-primary">{user?.full_name || 'Officer'}</span>
+          <span className="text-[9px] theme-text-secondary uppercase">({user?.role || 'FIELD_OFFICER'})</span>
         </div>
+
+        {/* Logout Button */}
+        <button
+          onClick={logout}
+          title="Sign out of workstation"
+          className="flex items-center gap-1 px-2 py-0.5 theme-bg-secondary hover:bg-red-900/20 text-red-600 dark:text-red-400 font-mono font-bold text-[10px] border theme-border rounded-[2px] transition-colors"
+        >
+          <LogOut className="h-3 w-3" />
+          <span>LOGOUT</span>
+        </button>
       </div>
     </header>
   );
