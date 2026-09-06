@@ -6,7 +6,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => Boolean(localStorage.getItem('token')));
   const [error, setError] = useState(null);
 
   const fetchCurrentUser = async () => {
@@ -21,7 +21,8 @@ export function AuthProvider({ children }) {
     try {
       setLoading(true);
       const res = await apiService.getMe();
-      setUser(res.data);
+      const userData = res.data || res;
+      setUser(userData);
       setToken(storedToken);
       setError(null);
     } catch (err) {
@@ -51,20 +52,27 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
+    setLoading(true);
     setError(null);
     try {
       const data = await apiService.login(email, password);
-      if (data.access_token) {
+      if (data && data.access_token) {
         localStorage.setItem('token', data.access_token);
         setToken(data.access_token);
         const meRes = await apiService.getMe();
-        setUser(meRes.data);
-        return meRes.data;
+        const userData = meRes.data || meRes;
+        setUser(userData);
+        setError(null);
+        return userData;
+      } else {
+        throw new Error('No access token received from authentication server');
       }
     } catch (err) {
-      const msg = err.response?.data?.detail || 'Invalid email or password. Please try again.';
+      const msg = err.response?.data?.detail || err.message || 'Invalid email or password. Please try again.';
       setError(msg);
       throw new Error(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,6 +81,7 @@ export function AuthProvider({ children }) {
     setUser(null);
     setToken(null);
     setError(null);
+    setLoading(false);
   };
 
   const value = {

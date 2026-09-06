@@ -23,7 +23,8 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    const returnLocation = location.pathname !== '/login' ? location : { pathname: '/' };
+    return <Navigate to="/login" state={{ from: returnLocation }} replace />;
   }
 
   return children;

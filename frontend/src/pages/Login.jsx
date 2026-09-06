@@ -9,17 +9,19 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
 
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/';
+  const rawFrom = location.state?.from;
+  const fromPath = typeof rawFrom === 'string' ? rawFrom : rawFrom?.pathname;
+  const targetPath = (fromPath && fromPath !== '/login') ? fromPath : '/';
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate(from, { replace: true });
+    if (isAuthenticated && !loading) {
+      navigate(targetPath, { replace: true });
     }
-  }, [isAuthenticated, navigate, from]);
+  }, [isAuthenticated, loading, navigate, targetPath]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +35,8 @@ export default function Login() {
 
     try {
       await login(email.trim(), password);
-      navigate(from, { replace: true });
+      setFormError('');
+      navigate(targetPath, { replace: true });
     } catch (err) {
       setFormError(err.message || 'Authentication failed. Please verify credentials.');
     } finally {
@@ -118,7 +121,10 @@ export default function Login() {
                     type="email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (formError) setFormError('');
+                    }}
                     placeholder="officer@bhumisatya.gov.in"
                     className="w-full pl-9 pr-3 py-2 theme-bg-surface border theme-border theme-text-primary text-xs font-mono rounded-[2px] focus:outline-none focus:border-emerald-600"
                   />
@@ -135,7 +141,10 @@ export default function Login() {
                     type="password"
                     required
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (formError) setFormError('');
+                    }}
                     placeholder="••••••••••••"
                     className="w-full pl-9 pr-3 py-2 theme-bg-surface border theme-border theme-text-primary text-xs font-mono rounded-[2px] focus:outline-none focus:border-emerald-600"
                   />

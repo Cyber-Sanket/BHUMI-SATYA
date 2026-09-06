@@ -24,7 +24,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      window.dispatchEvent(new Event('auth-unauthorized'));
+      const isLoginRequest = error.config?.url?.includes('/auth/login');
+      if (!isLoginRequest) {
+        window.dispatchEvent(new Event('auth-unauthorized'));
+      }
     }
     return Promise.reject(error);
   }
@@ -45,9 +48,6 @@ export const apiService = {
     const res = await api.post('/auth/login', formData, {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
-    if (res.data.access_token) {
-      localStorage.setItem('token', res.data.access_token);
-    }
     return res.data;
   },
 
