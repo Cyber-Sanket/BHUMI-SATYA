@@ -4,6 +4,13 @@
   publish = "dist"
   command = "npm run build"
 
+# API Proxy to Railway Production Backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://bhumi-satya-production.up.railway.app/api/:splat"
+  status = 200
+  force = true
+
 # Single Page Application SPA Routing
 [[redirects]]
   from = "/*"

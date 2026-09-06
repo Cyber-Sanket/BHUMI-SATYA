@@ -17,9 +17,20 @@ app = FastAPI(
 # Configure CORS
 origins = [o.strip() for o in settings.ALLOWED_ORIGINS.split(",") if o.strip()]
 
+# Netlify production & preview origins, plus standard localhost dev origins
+default_origins = [
+    "https://bhumi-satya.netlify.app",
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
+for d in default_origins:
+    if d not in origins:
+        origins.append(d)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins if origins else ["*"],
+    allow_origins=origins if "*" not in origins else ["*"],
+    allow_origin_regex=r"https://.*\.netlify\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
